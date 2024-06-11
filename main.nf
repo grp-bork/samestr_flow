@@ -8,20 +8,10 @@ include { run_metaphlan4; combine_metaphlan4; collate_metaphlan4_tables } from "
 include { samestr } from "./metaphlow/workflows/samestr"
 
 
-def input_dir = p
-
-if (!params.fastq_input_pattern) {
-	params.fastq_input_pattern = "**[._]{fastq.gz,fq.gz,fastq.bz2,fq.bz2}"
-}
-def fastq_input_pattern = input_dir + "/" + params.fastq_input_pattern
-
-params.skip_alignment = true
-
-
 workflow {
 
 	fastq_input(
-		Channel.fromPath(input_dir + "/*", type: "dir"),
+		Channel.fromPath(params.input_dir + "/*", type: "dir"),
 		Channel.of(null)
 	)
 
