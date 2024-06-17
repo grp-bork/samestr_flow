@@ -6,7 +6,7 @@ Usage
 
 
 ```
-nextflow run /path/to/metaphlow --input_dir </path/to/read_files> --output_dir </path/to/output_dir> [PARAMETERS]
+nextflow run /path/to/samestr_flow --input_dir </path/to/read_files> --output_dir </path/to/output_dir> [PARAMETERS]
 ```
 
 ### Input data

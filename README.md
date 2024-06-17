@@ -1,6 +1,6 @@
 # samestr_flow
 
-samestr_flow is a nextflow workflow for running Metaphlan4/samestr. The workflow includes optional read preprocessing and host/human decontamination steps.
+samestr_flow is a nextflow workflow for running the strain-identification tools [SameStr](https://github.com/danielpodlesny/samestr) based on `Metaphlan4` profiles. The workflow includes optional read preprocessing and host/human decontamination steps.
 
 ## Prerequisites & Requirements
 
@@ -24,7 +24,16 @@ The default supported Metaphlan version is 4.
 
 #### CHOCOPhlAn database for Metaphlan4
 
-Get the `mpa_vOct22_CHOCOPhlAnSGB_202212` database from [here](http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/mpa_vOct22_CHOCOPhlAnSGB_202212.tar), unpack the tarball, and point the `--mp4_db` parameter to the database's root directory. 
+Get an SGB-based CHOCOPhlAn database from the [official Biobakery site](http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/). At the time of writing, the following databases are available:
+
+* `mpa_vJan21_CHOCOPhlAnSGB_202103` (has SameStr db)
+* `mpa_vOct22_CHOCOPhlAnSGB_202212` (has SameStr db)
+* `mpa_vJun23_CHOCOPhlAnSGB_202307` (has SameStr db)
+* `mpa_vOct22_CHOCOPhlAnSGB_202403` (not tested)
+* `mpa_vJun23_CHOCOPhlAnSGB_202403` (not tested)
+
+To install the database, unpack the tarball and point the `--mp4_db` parameter to the database's root directory.
+
 
 In `params.yml`:
 
@@ -41,12 +50,12 @@ On the command line:
 
 ### SameStr databases
 
-TBD
+Obtain the SameStr database corresponding to your CHOCOPhlAn database from the [Zenodo repository](https://zenodo.org/records/10640239).
 
 
 ## Running samestr_flow
 
-A metaphlow run is controlled by environment-specific parameters (s. [run.config](config/run.config)) and studiy-specific parameters (s. [params.yml](config/params.yml)). The parameters in the `params.yml` can be specified on the command line as well.
+A samestr_flow run is controlled by environment-specific parameters (s. [run.config](config/run.config)) and studiy-specific parameters (s. [params.yml](config/params.yml)). The parameters in the `params.yml` can be specified on the command line as well.
 
 You can either clone samestr_flow from GitHub and run it as follows
 
