@@ -1,6 +1,8 @@
 # samestr_flow
 
-samestr_flow is a nextflow workflow for running the strain-identification tool [SameStr](https://github.com/danielpodlesny/samestr) based on `Metaphlan4` profiles. The workflow includes optional read preprocessing and host/human decontamination steps.
+samestr_flow is a nextflow workflow for running the strain-identification tool [SameStr](https://github.com/danielpodlesny/samestr) based on `Metaphlan4` profiles. The workflow includes optional read preprocessing and host/human decontamination steps provided by the [nevermore](https://github.com/cschu/nevermore) workflow library.
+
+![Nevermore_workflow](docs/nevermore.svg)
 
 ![SameStr_subworkflow](docs/samestr_subworkflow.svg)
 
