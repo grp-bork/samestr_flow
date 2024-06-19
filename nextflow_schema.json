@@ -63,7 +63,7 @@
                     "format": "directory-path",
                     "description": "Path to samestr marker database",
 					"hidden": true,
-                    "default": "/vol/data/databases/clowm/CLDB-0190035a020874b2b26a678a86dd3bd0/0190035a021079518f9579a8a1db7f05"
+                    "default": "/vol/data/databases/clowm/CLDB-0190035a020874b2b26a678a86dd3bd0/0190035a021079518f9579a8a1db7f05/SameStr_mpa_vJun23_CHOCOPhlAnSGB_202307"
                 }
 			},
             "required": [
