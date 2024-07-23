@@ -1,0 +1,9 @@
+url_path,views_total,views_unique
+/grp-bork/samestr_flow/tree/main/metaphlow/modules/profilers,5,1
+/grp-bork/samestr_flow/blob/main/metaphlow/modules/profilers/humann3.nf,4,1
+/grp-bork/samestr_flow/blob/main/metaphlow/modules/profilers/samestr.nf,4,1
+/grp-bork/samestr_flow,2,2
+/grp-bork/samestr_flow/blob/main/main.nf,2,1
+/grp-bork/samestr_flow/blob/main/nextflow.config,2,1
+/grp-bork/samestr_flow/tree/main/metaphlow,2,1
+/grp-bork/samestr_flow/tree/main,1,1
