@@ -1,0 +1,19 @@
+{
+  "inputParameters": [
+    "input_dir"
+  ],
+  "outputParameters": [
+    "output_dir"
+  ],
+  "exampleParameters": {
+    "input_dir": "s3://example-data-samestr/"
+  },
+  "resourceParameters": [
+    "remove_host_kraken2_db",
+    "samestr_marker_db",
+    "mp4_db"
+  ],
+  "dois": [
+    "10.1186/s40168-022-01251-w"
+  ]
+}
