@@ -1,3 +1,4 @@
+# SameStr workflow
 <table>
   <tr width="100%">
     <td width="150px">
@@ -28,18 +29,22 @@
 
 
 ---
-# Overview
-
 The `SameStr workflow` is a nextflow workflow for running the strain-identification tool [SameStr](https://github.com/danielpodlesny/samestr) based on `Metaphlan4` profiles. The workflow includes optional read preprocessing and host/human decontamination steps provided by the [nevermore](https://github.com/cschu/nevermore) workflow library.
 
-![Nevermore_workflow](docs/nevermore.svg)
 
-![SameStr_subworkflow](docs/samestr_subworkflow.svg)
+## Citation
+Podlesny, D., Arze, C., Dörner, E., Verma, S., Dutta, S., Walter, J., & Fricke, W. F. (2022). Metagenomic strain detection with SameStr: identification of a persisting core gut microbiota transferable by fecal transplantation. Microbiome, 10(1), 53. https://doi.org/10.1186/s40168-022-01251-w
+
+---
+# Overview
+![Nevermore_workflow](https://github.com/grp-bork/samestr_flow/blob/main/docs/nevermore.svg)
+
+![SameStr_subworkflow](https://github.com/grp-bork/samestr_flow/blob/main/docs/samestr_subworkflow.svg)
 
 ---
 # Requirements
 
-The easiest way to handle `samestr_flow`'s dependencies is via Singularity/Docker containers. Alternatively, conda environments, software module systems or native installations can be used.
+The easiest way to handle dependencies is via Singularity/Docker containers. Alternatively, conda environments, software module systems or native installations can be used.
 
 ## Preprocessing
 
@@ -90,7 +95,7 @@ Obtain the SameStr database corresponding to your CHOCOPhlAn database from the [
 ---
 # Usage
 
-The workflow run is controlled by environment-specific parameters (s. [run.config](config/run.config)) and studiy-specific parameters (s. [params.yml](config/params.yml)). The parameters in the `params.yml` can be specified on the command line as well.
+The workflow run is controlled by environment-specific parameters (see [run.config](https://github.com/grp-bork/samestr_flow/blob/main/config/run.config)) and study-specific parameters (see [params.yml](https://github.com/grp-bork/samestr_flow/blob/main/config/params.yml)). The parameters in the `params.yml` can be specified on the command line as well.
 
 You can either clone this repository from GitHub and run it as follows
 ```
@@ -104,17 +109,7 @@ nextflow run grp-bork/samestr_flow [-resume] -c /path/to/run.config -params-file
 ```
 
 ## Input files
-samestr_flow supports fastq files. These can be uncompressed (but shouldn't be!) or compressed with gzip or bzip2. Sample data must be arranged in one directory per sample.
+Fastq files are supported and can be either uncompressed (but shouldn't be!) or compressed with gzip or bzip2. Sample data must be arranged in one directory per sample.
 
 ### Per-sample input directories
-All files in a sample directory will be associated with name of the sample folder. Paired-end mate files need to have matching prefixes. Mates 1 and 2 can be specified with suffixes `_[12]`, `_R[12]`, `.[12]`, `.R[12]`. Lane IDs or other read id modifiers have to precede the mate identifier. Files with names not containing either of those patterns will be assigned to be single-ended. Metaphlow assumes samples that consist of both single and paired end files to be paired end with all single end files being orphans (quality control survivors). 
-
-
-
-
-
-
-
-
-
-
+All files in a sample directory will be associated with name of the sample folder. Paired-end mate files need to have matching prefixes. Mates 1 and 2 can be specified with suffixes `_[12]`, `_R[12]`, `.[12]`, `.R[12]`. Lane IDs or other read id modifiers have to precede the mate identifier. Files with names not containing either of those patterns will be assigned to be single-ended. Samples consisting of both single and paired end files are assumed to be paired end with all single end files being orphans (quality control survivors). 
