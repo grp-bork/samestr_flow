@@ -103,12 +103,10 @@ Or, you can have nextflow pull it from github and run it from the `$HOME/.nextfl
 nextflow run grp-bork/samestr_flow [-resume] -c /path/to/run.config -params-file /path/to/params.yml
 ```
 
-### Input files
-
+## Input files
 samestr_flow supports fastq files. These can be uncompressed (but shouldn't be!) or compressed with gzip or bzip2. Sample data must be arranged in one directory per sample.
 
-#### Per-sample input directories
-
+### Per-sample input directories
 All files in a sample directory will be associated with name of the sample folder. Paired-end mate files need to have matching prefixes. Mates 1 and 2 can be specified with suffixes `_[12]`, `_R[12]`, `.[12]`, `.R[12]`. Lane IDs or other read id modifiers have to precede the mate identifier. Files with names not containing either of those patterns will be assigned to be single-ended. Metaphlow assumes samples that consist of both single and paired end files to be paired end with all single end files being orphans (quality control survivors). 
 
 
