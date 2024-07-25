@@ -4,8 +4,8 @@
       <a href="https://www.bork.embl.de/"><img src="https://www.bork.embl.de/assets/img/normal_version.png" alt="Bork Group Logo" width="150px" height="auto"></a>
     </td>
     <td width="425px" align="center">
-      <b>This workflow was developed by the <a href="https://www.bork.embl.de/">Bork Group</a>.</b><br>
-      Raise an <a href="https://github.com/grp-bork/samestr_flow/issues">issue</a> or <a href="mailto:N4M@embl.de">contact us</a> in case of problems.<br><br>
+      <b>Developed by the <a href="https://www.bork.embl.de/">Bork Group</a>.</b><br>
+      Raise an <a href="https://github.com/grp-bork/samestr_flow/issues">issue</a> or <a href="mailto:N4M@embl.de">contact us</a>.<br><br>
       See our <a href="https://www.bork.embl.de/services.html">other Software & Services</a>.
     </td>
     <td width="500px">
