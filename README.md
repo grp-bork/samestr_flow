@@ -29,10 +29,11 @@
 
 
 ---
+#### Description
 The `SameStr workflow` is a nextflow workflow for running the strain-identification tool [SameStr](https://github.com/danielpodlesny/samestr) based on `Metaphlan4` profiles. The workflow includes optional read preprocessing and host/human decontamination steps provided by the [nevermore](https://github.com/cschu/nevermore) workflow library.
 
 
-### Citation
+#### Citation
 Podlesny, D., Arze, C., Dörner, E., Verma, S., Dutta, S., Walter, J., & Fricke, W. F. (2022). Metagenomic strain detection with SameStr: identification of a persisting core gut microbiota transferable by fecal transplantation. Microbiome, 10(1), 53. https://doi.org/10.1186/s40168-022-01251-w
 
 ---
