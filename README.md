@@ -26,10 +26,9 @@
   </tr>
 </table>
 
+
 ---
-
-
-# Introduction
+# Overview
 
 The `SameStr workflow` is a nextflow workflow for running the strain-identification tool [SameStr](https://github.com/danielpodlesny/samestr) based on `Metaphlan4` profiles. The workflow includes optional read preprocessing and host/human decontamination steps provided by the [nevermore](https://github.com/cschu/nevermore) workflow library.
 
@@ -37,29 +36,28 @@ The `SameStr workflow` is a nextflow workflow for running the strain-identificat
 
 ![SameStr_subworkflow](docs/samestr_subworkflow.svg)
 
-
-
-## Requirements
+---
+# Requirements
 
 The easiest way to handle `samestr_flow`'s dependencies is via Singularity/Docker containers. Alternatively, conda environments, software module systems or native installations can be used.
 
-### Preprocessing
+## Preprocessing
 
 Preprocessing and QA is done with bbmap, fastqc, and multiqc.
 
-### Decontamination/Host removal
+## Decontamination/Host removal
 
 Decontamination is done with kraken2 and additionally requires seqtk. 
 
-#### Kraken2 database
+### Kraken2 database
 
 Host removal requires a kraken2 host database.
 
-### Metaphlan Profiling
+## Metaphlan Profiling
 
 The default supported Metaphlan version is 4.
 
-#### CHOCOPhlAn database for Metaphlan4
+### CHOCOPhlAn database for Metaphlan4
 
 Get an SGB-based CHOCOPhlAn database from the [official Biobakery site](http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/). At the time of writing, the following databases are available:
 
@@ -70,7 +68,6 @@ Get an SGB-based CHOCOPhlAn database from the [official Biobakery site](http://c
 * `mpa_vJun23_CHOCOPhlAnSGB_202403` (not tested)
 
 To install the database, unpack the tarball and point the `--mp4_db` parameter to the database's root directory.
-
 
 In `params.yml`:
 
@@ -83,26 +80,25 @@ On the command line:
 ```
 --mp4_db "/path/to/mpa_vOct22_CHOCOPhlAnSGB_202212/"
 ```
-
+## SameStr Profiling
+Shared strains are detected with SameStr.
 
 ### SameStr databases
 
 Obtain the SameStr database corresponding to your CHOCOPhlAn database from the [Zenodo repository](https://zenodo.org/records/10640239).
 
+---
+# Usage
 
-## Usage
+The workflow run is controlled by environment-specific parameters (s. [run.config](config/run.config)) and studiy-specific parameters (s. [params.yml](config/params.yml)). The parameters in the `params.yml` can be specified on the command line as well.
 
-A samestr_flow run is controlled by environment-specific parameters (s. [run.config](config/run.config)) and studiy-specific parameters (s. [params.yml](config/params.yml)). The parameters in the `params.yml` can be specified on the command line as well.
-
-You can either clone samestr_flow from GitHub and run it as follows
-
+You can either clone this repository from GitHub and run it as follows
 ```
 git clone https://github.com/grp-bork/samestr_flow.git
 nextflow run /path/to/samestr_flow [-resume] -c /path/to/run.config -params-file /path/to/params.yml
 ```
 
 Or, you can have nextflow pull it from github and run it from the `$HOME/.nextflow` directory.
-
 ```
 nextflow run grp-bork/samestr_flow [-resume] -c /path/to/run.config -params-file /path/to/params.yml
 ```
