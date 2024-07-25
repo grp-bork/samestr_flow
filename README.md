@@ -37,9 +37,9 @@ Podlesny, D., Arze, C., Dörner, E., Verma, S., Dutta, S., Walter, J., & Fricke,
 
 ---
 # Overview
-![Nevermore_workflow](https://github.com/grp-bork/samestr_flow/blob/main/docs/nevermore.svg)
+![Nevermore_workflow](https://raw.githubusercontent.com/grp-bork/samestr_flow/main/docs/nevermore.svg)
 
-![SameStr_subworkflow](https://github.com/grp-bork/samestr_flow/blob/main/docs/samestr_subworkflow.svg)
+![SameStr_subworkflow](https://raw.githubusercontent.com/grp-bork/samestr_flow/main/docs/samestr_subworkflow.svg)
 
 ---
 # Requirements
