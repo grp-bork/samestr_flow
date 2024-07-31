@@ -63,7 +63,7 @@ Decontamination is done with `kraken2` and additionally requires `seqtk`.
 
 Host removal requires a `kraken2` host database.
 
-### Metaphlan Profiling
+## Metaphlan Profiling
 
 The default supported `MetaPhlAn` version is 4.
 
