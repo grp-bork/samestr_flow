@@ -34,12 +34,16 @@ The `SameStr workflow` is a nextflow workflow for running the strain-identificat
 
 
 #### Citation
-Podlesny, D., Arze, C., Dörner, E., Verma, S., Dutta, S., Walter, J., & Fricke, W. F. (2022). Metagenomic strain detection with SameStr: identification of a persisting core gut microbiota transferable by fecal transplantation. Microbiome, 10(1), 53. https://doi.org/10.1186/s40168-022-01251-w
+This workflow: badge tbd.
+
+Also cite:
+```
+Podlesny D, Arze C, Dörner E, et al. Metagenomic strain detection with SameStr: identification of a persisting core gut microbiota transferable by fecal transplantation. Microbiome. 2022;10(1):53. Published 2022 Mar 25. doi:10.1186/s40168-022-01251-w
+```
 
 ---
 # Overview
 ![Nevermore_workflow](https://raw.githubusercontent.com/grp-bork/samestr_flow/main/docs/nevermore.svg)
-
 ![SameStr_subworkflow](https://raw.githubusercontent.com/grp-bork/samestr_flow/main/docs/samestr_subworkflow.svg)
 
 ---
@@ -49,23 +53,23 @@ The easiest way to handle dependencies is via Singularity/Docker containers. Alt
 
 ## Preprocessing
 
-Preprocessing and QA is done with bbmap, fastqc, and multiqc.
+Preprocessing and QA is done with `bbmap`, `fastqc`, and `multiqc`.
 
-## Decontamination/Host removal
+### Decontamination/Host removal
 
-Decontamination is done with kraken2 and additionally requires seqtk. 
+Decontamination is done with `kraken2` and additionally requires `seqtk`. 
 
-### Kraken2 database
+#### Kraken2 database
 
-Host removal requires a kraken2 host database.
+Host removal requires a `kraken2` host database.
 
-## Metaphlan Profiling
+### Metaphlan Profiling
 
-The default supported Metaphlan version is 4.
+The default supported `MetaPhlAn` version is 4.
 
 ### CHOCOPhlAn database for Metaphlan4
 
-Get an SGB-based CHOCOPhlAn database from the [official Biobakery site](http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/). At the time of writing, the following databases are available:
+Get an SGB-based `CHOCOPhlAn` database from the [official Biobakery site](http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/). At the time of writing, the following databases are available:
 
 * `mpa_vJan21_CHOCOPhlAnSGB_202103` (has SameStr db)
 * `mpa_vOct22_CHOCOPhlAnSGB_202212` (has SameStr db)
@@ -87,15 +91,18 @@ On the command line:
 --mp4_db "/path/to/mpa_vOct22_CHOCOPhlAnSGB_202212/"
 ```
 ## SameStr Profiling
-Shared strains are detected with SameStr.
+Shared strains are detected with `SameStr`.
 
 ### SameStr databases
 
-Obtain the SameStr database corresponding to your CHOCOPhlAn database from the [Zenodo repository](https://zenodo.org/records/10640239).
+Obtain the `SameStr` database corresponding to your `CHOCOPhlAn` database from the [Zenodo repository](https://zenodo.org/records/10640239).
 
 ---
 # Usage
+## Cloud-based Workflow Manager (CloWM)
+This workflow will be available on the `CloWM` platform (coming soon).
 
+## Command-Line Interface (CLI)
 The workflow run is controlled by environment-specific parameters (see [run.config](https://github.com/grp-bork/samestr_flow/blob/main/config/run.config)) and study-specific parameters (see [params.yml](https://github.com/grp-bork/samestr_flow/blob/main/config/params.yml)). The parameters in the `params.yml` can be specified on the command line as well.
 
 You can either clone this repository from GitHub and run it as follows
@@ -110,7 +117,7 @@ nextflow run grp-bork/samestr_flow [-resume] -c /path/to/run.config -params-file
 ```
 
 ## Input files
-Fastq files are supported and can be either uncompressed (but shouldn't be!) or compressed with gzip or bzip2. Sample data must be arranged in one directory per sample.
+Fastq files are supported and can be either uncompressed (but shouldn't be!) or compressed with `gzip` or `bzip2`. Sample data must be arranged in one directory per sample.
 
 ### Per-sample input directories
-All files in a sample directory will be associated with name of the sample folder. Paired-end mate files need to have matching prefixes. Mates 1 and 2 can be specified with suffixes `_[12]`, `_R[12]`, `.[12]`, `.R[12]`. Lane IDs or other read id modifiers have to precede the mate identifier. Files with names not containing either of those patterns will be assigned to be single-ended. Samples consisting of both single and paired end files are assumed to be paired end with all single end files being orphans (quality control survivors). 
+All files in a sample directory will be associated with the name of the sample folder. Paired-end mate files need to have matching prefixes. Mates 1 and 2 can be specified with suffixes `_[12]`, `_R[12]`, `.[12]`, `.R[12]`. Lane IDs or other read id modifiers have to precede the mate identifier. Files with names not containing either of those patterns will be assigned to be single-ended. Samples consisting of both single and paired end files are assumed to be paired end with all single end files being orphans (quality control survivors). 
