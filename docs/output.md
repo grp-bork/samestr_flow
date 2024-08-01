@@ -1,25 +1,26 @@
-Output
-======
+# Output
 
+## MetaPhlAn4
+* `<sample>.mp4.txt`: Taxonomic profile (sample-specific)
+* `metaphlan4_abundance_table.txt`: (collated)
+* `<sample>.mp4.sam.bz2`: Marker alignment files
 
-MetaPhlan4
-----------
+## SameStr
+SameStr converts (`samestr convert`) MetaPhlAn marker alignment files into Single Nucleotide Variant (SNV) profiles per clade and sample. These are further processed and analyzed, producing the outputs below.
 
-`samestr_flow` produces individual sample-specific metaphlan4 profiles as well as a collated file across all samples.
+merge
+* `sstr_merge/<clade>.npz`: clade-wise merged SNV profiles across samples
+* `sstr_merge/<clade>.names.txt`: sample list in the same order
 
-SameStr
--------
+stats 
+* `sstr_stats/<clade>.aln_stats.txt`: statistics related to coverage and nucleotide diversity of the merged and filtered SNV profiles.
 
-The various components of the SameStr subworkflow produce the following outputs:
+compare
+* `sstr_compare/<clade>.closest.txt`: number of alignment sites with the same variant in both samples of each sample-pair
+* `sstr_compare/<clade>.overlap.txt`: number of alignment sites with coverage in both samples of each sample-pair
+* `sstr_compare/<clade>.fraction.txt`: fraction of `closest` divided by `overlap`
 
-
-* `merge` merges nucleotide variant profiles obtained from metagenomic samples
-  - 2 files `t__SGB<SGB>.names.txt` and `t__SGB<SGB>.npz` per SGB  + group files?
-* `stats` generates statistics related to coverage and nucleotide diversity in nucleotide variant profiles of the merged and filtered results.
-  - 1 file `t__SGB<SGB>.aln_stats.txt` per SGB + group files?
-* `compare` performs pairwise clade-specific alignment comparison
-  - 3 files `t__SGB<SGB>.closest.txt` (), `t__SGB<SGB>.fraction.txt` (), `t_SGB<SGB>.overlap.txt` () per SGB + group files?
-* `summarize` calls and summarises shared strains based on defined criteria. It also generates taxonomic co-occurrence tables at the kingdom, phylum, class, order, family, genus, species, and strain-level.
-  - `sstr_cooccurrences.tsv`
-  - `sstr_strain_events.tsv`
-  - `taxon_counts.tsv`
+summarize
+* `sstr_summarize/sstr_cooccurrences.tsv`: taxonomic co-occurrence at the kingdom, phylum, class, order, family, genus, species, and strain-level
+* `sstr_summarize/sstr_strain_events.tsv`: shared strain calls based on thresholds for minimum coverage overlap (default: 5kbp) and SNV profile similarity (default: 99.9%, `fraction` value).
+* `sstr_summarize/taxon_counts.tsv`: number of taxa detected at each taxonomic level
