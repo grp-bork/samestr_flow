@@ -11,7 +11,7 @@ include { samestr } from "./metaphlow/workflows/samestr"
 workflow {
 
 	fastq_input(
-		Channel.fromPath(params.input_dir + "/*", type: "dir"),
+		Channel.fromPath(input_dir + "/**[._]{fastq.gz,fq.gz,fastq.bz2,fq.bz2}"),
 		Channel.of(null)
 	)
 

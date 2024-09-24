@@ -1,8 +1,7 @@
 process reduce_metaphlan_profiles {
-    // container "quay.io/biocontainers/humann:3.7--pyh7cba7a3_1"
-    // container "quay.io/biocontainers/humann:3.8--pyh7cba7a3_0"
     container = "registry.git.embl.de/schudoma/humann3-docker:latest"
-    label "default"
+    label "humann3"
+    label "medium"
 
 	input:
 		path(mp_collated_profiles)
@@ -27,10 +26,8 @@ process reduce_metaphlan_profiles {
 
 
 process generate_humann_joint_index {
-    // container "quay.io/biocontainers/humann:3.7--pyh7cba7a3_1"
-    // container "quay.io/biocontainers/humann:3.8--pyh7cba7a3_0"
     container = "registry.git.embl.de/schudoma/humann3-docker:latest"
-
+    label "humann3"
     label "process_high"
 	
 	input:
@@ -53,11 +50,9 @@ process generate_humann_joint_index {
 
 
 process run_humann3 {
-    // container "quay.io/biocontainers/humann:3.7--pyh7cba7a3_1"
-    // container "quay.io/biocontainers/humann:3.8--pyh7cba7a3_0"
     publishDir params.output_dir, mode: "copy"
     container = "registry.git.embl.de/schudoma/humann3-docker:latest"
-
+    label "humann3"
     label "process_high"
 
     input:
@@ -105,9 +100,9 @@ process run_humann3 {
 
 
 process reformat_genefamily_table {
-    // container "quay.io/biocontainers/humann:3.7--pyh7cba7a3_1"
-    // container "quay.io/biocontainers/humann:3.8--pyh7cba7a3_0"
     publishDir params.output_dir, mode: "copy"
+    label "humann3"
+    label "process_single"
     container = "registry.git.embl.de/schudoma/humann3-docker:latest"
 
     input:
