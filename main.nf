@@ -5,7 +5,7 @@ nextflow.enable.dsl=2
 include { nevermore_main } from "./nevermore/workflows/nevermore"
 include { fastq_input } from "./nevermore/workflows/input"
 include { run_metaphlan4; combine_metaphlan4; collate_metaphlan4_tables } from "./nevermore/modules/profilers/metaphlan4"
-include { samestr } from "./metaphlow/workflows/samestr"
+include { samestr_full as samestr } from "./metaphlow/workflows/samestr"
 
 
 workflow {
