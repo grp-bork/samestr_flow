@@ -6,7 +6,7 @@
     "output_dir"
   ],
   "exampleParameters": {
-    "input_dir": "s3://example-data-samestr/"
+    "input_dir": "s3://workflow-exampledata/samestr/"
   },
   "resourceParameters": [
     "remove_host_kraken2_db",
