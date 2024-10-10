@@ -30,7 +30,7 @@
 
 ---
 #### Description
-`SameStr` is a tool for strain-level analysis and microbial tracking with genomic/metagenomic data originally developed in the [Fricke Lab](https://microbiome.uni-hohenheim.de/) at the [University of Hohenheim](https://www.uni-hohenheim.de/en/english). The `SameStr workflow` is a nextflow workflow for running [SameStr](https://github.com/danielpodlesny/samestr) based on `MetaPhlAn4` marker alignments, including optional read preprocessing and host/human decontamination steps provided by the [nevermore](https://github.com/cschu/nevermore) workflow library.
+`SameStr` is a tool for strain-level analysis and microbial tracking with genomic/metagenomic data originally developed in the [Fricke Lab](https://microbiome.uni-hohenheim.de/en/english) at the [University of Hohenheim](https://www.uni-hohenheim.de/en/english). The `SameStr workflow` is a nextflow workflow for running [SameStr](https://github.com/danielpodlesny/samestr) based on `MetaPhlAn4` marker alignments, including optional read preprocessing and host/human decontamination steps provided by the [nevermore](https://github.com/cschu/nevermore) workflow library.
 
 
 #### Citation
