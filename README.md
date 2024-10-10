@@ -30,7 +30,7 @@
 
 ---
 #### Description
-The `SameStr workflow` is a nextflow workflow for running the strain-identification tool [SameStr](https://github.com/danielpodlesny/samestr) based on `Metaphlan4` profiles. The workflow includes optional read preprocessing and host/human decontamination steps provided by the [nevermore](https://github.com/cschu/nevermore) workflow library.
+The `SameStr workflow` is a nextflow workflow for running the strain-identification tool [SameStr](https://github.com/danielpodlesny/samestr) (originally developed at the [Fricke Lab](https://microbiome.uni-hohenheim.de/)) based on `Metaphlan4` profiles. The workflow includes optional read preprocessing and host/human decontamination steps provided by the [nevermore](https://github.com/cschu/nevermore) workflow library.
 
 
 #### Citation
