@@ -1,0 +1,10 @@
+url_path,views_total,views_unique
+/grp-bork/samestr_flow/tree/main/nevermore,3,1
+/grp-bork/samestr_flow,2,2
+/grp-bork/samestr_flow/tree/main/nevermore/modules,2,1
+/grp-bork/samestr_flow/tree/main/nevermore/workflows,2,1
+/grp-bork/samestr_flow/blob/main/nevermore/modules/qc/bbduk.nf,1,1
+/grp-bork/samestr_flow/blob/main/nevermore/modules/qc/subsample.nf,1,1
+/grp-bork/samestr_flow/blob/main/nevermore/workflows/nevermore.nf,1,1
+/grp-bork/samestr_flow/blob/main/nevermore/workflows/prep.nf,1,1
+/grp-bork/samestr_flow/tree/main/nevermore/modules/qc,1,1
