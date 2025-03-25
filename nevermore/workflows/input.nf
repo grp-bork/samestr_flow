@@ -5,6 +5,8 @@ include { classify_sample; classify_sample_with_library_info } from "../modules/
 
 params.bam_input_pattern = "**.bam"	
 
+params.input_dir_structure = "tree"
+
 def bam_suffix_pattern = params.bam_input_pattern.replaceAll(/\*/, "")
 
 
@@ -96,8 +98,23 @@ workflow fastq_input {
 		libsfx
 	
 	main:
+		if (params.input_dir_structure == "flat") {
+			fastq_ch = fastq_ch
+				.map { file -> [ 
+					file.getName()
+						.replaceAll(/\.(fastq|fq)(\.(gz|bz2))?$/, "")
+						.replaceAll(/[._]R?[12]$/, "")
+						.replaceAll(/[._]singles$/, ""),
+					file
+				] }
+
+		} else {
+			fastq_ch = fastq_ch
+				.map { file -> return tuple(file.getParent().getName(), file) }
+		}
+
 		fastq_ch = fastq_ch
-			.map { file -> return tuple(file.getParent().getName(), file) }
+			// .map { file -> return tuple(file.getParent().getName(), file) }
 			.groupTuple(by: 0)
 			.combine(libsfx)
 			.map { sample_id, files, suffix -> return tuple(sample_id, files, (params.remote_input_dir != null || params.remote_input_dir), suffix) }
