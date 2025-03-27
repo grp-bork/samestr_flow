@@ -19,7 +19,7 @@
                 "qc_params_shotgun": {
                     "type": "string",
                     "description": "bbduk quality control parameters",
-                    "default": "qtrim=rl trimq=25 maq=25 ktrim=r k=23 mink=11 hdist=1 ftm=5 entropy=0.5 entropywindow=50 entropyk=5 tpe tbo"
+                    "default": "maq=3 qtrim=rl trimq=21 ktrim=r k=23 mlf=0.5 mink=11 hdist=1 entropy=0.5 entropywindow=50 entropyk=5 tpe tbo"
                 },
                 "remove_host_kraken2_db": {
                     "type": "string",
@@ -48,8 +48,9 @@
                 },
                 "input_dir_structure": {
                     "type": "string",
+                    "enum": ["flat", "tree"],
                     "description": "Are the input files stored at base-level of input directory ('flat') or as one subdirectory per sample ('tree')?",
-                    "default": "tree"
+                    "default": "flat"
                 },
                 "output_dir": {
                     "type": "string",
