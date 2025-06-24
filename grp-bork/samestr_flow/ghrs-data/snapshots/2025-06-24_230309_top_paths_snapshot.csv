@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/grp-bork/samestr_flow,6,4
+/grp-bork/samestr_flow/blob/main/main.nf,3,1
+/grp-bork/samestr_flow/tree/main/config,2,2
+/grp-bork/samestr_flow/blob/main/nevermore/workflows/align.nf,2,1
+/grp-bork/samestr_flow/blob/main/bin/collate_stats.py,1,1
+/grp-bork/samestr_flow/blob/main/config/params.yml,1,1
+/grp-bork/samestr_flow/blob/main/config/run.config,1,1
+/grp-bork/samestr_flow/blob/main/metaphlow/workflows/humann3.nf,1,1
+/grp-bork/samestr_flow/blob/main/metaphlow/workflows/samestr.nf,1,1
+/grp-bork/samestr_flow/blob/main/nevermore/workflows/decon.nf,1,1
