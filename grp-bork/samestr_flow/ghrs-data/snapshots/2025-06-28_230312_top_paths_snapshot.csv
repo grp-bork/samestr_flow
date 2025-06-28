@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/grp-bork/samestr_flow,15,6
+/grp-bork/samestr_flow/blob/main/main.nf,6,1
+/grp-bork/samestr_flow/blob/main/nevermore/workflows/align.nf,6,1
+/grp-bork/samestr_flow/tree/main/metaphlow,6,1
+/grp-bork/samestr_flow/tree/main/nevermore,5,1
+/grp-bork/samestr_flow/tree/main/nevermore/workflows,5,1
+/grp-bork/samestr_flow/blob/main/nevermore/workflows/nevermore.nf,4,1
+/grp-bork/samestr_flow/blob/main/clowm_info.json,2,1
+/grp-bork/samestr_flow/blob/main/nextflow.config,2,1
+/grp-bork/samestr_flow/blob/main/bin/collate_stats.py,1,1
