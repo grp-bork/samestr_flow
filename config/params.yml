@@ -46,5 +46,5 @@ hostile_db: null
 mp4_db: "/path/to/metaphlan4/database"
 
 # samestr database
-samestr_db: "/path/to/samestr/database"
+samestr_marker_db: "/path/to/samestr/database"
 
