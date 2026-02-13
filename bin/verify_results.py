@@ -60,14 +60,17 @@ def main():
 
 	workdir = pathlib.Path(args.workdir)
 	
-
+	n_convert, n_convert_ok = 0, 0
 	with open(args.tracefile, "rt") as _in:
 		for row in csv.DictReader(_in, delimiter="\t"):
-			if row["status"] == "COMPLETED" and row["exit"] == "0":
+			if row["status"] in ("COMPLETED", "CACHED") and row["exit"] == "0":
 				if "run_samestr_convert" in row["name"] and row["status"]:
+					n_convert += 1
 					status, msg = check_convert(re.search(r'\((.+)\)', row["name"]).group(1), row["hash"], workdir)
+					n_convert_ok += status
 					print(msg)
 
+	print(f"{n_convert_ok}/{n_convert} samestr convert processes ok.")
 
 
 if __name__ == "__main__":
