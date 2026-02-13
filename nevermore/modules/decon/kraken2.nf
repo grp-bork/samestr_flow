@@ -94,9 +94,9 @@ process remove_host_kraken2_individual {
 
 		} else {
 			postprocessing += """
-			if [[ -f ${sample.id}_1.fastq ]]; then
-				mv ${sample.id}_1.fastq no_host/${sample.id}/${sample.id}_R1.fastq
-				gzip no_host/${sample.id}/*.fastq
+			if [[ -f reads_decon_1.fastq ]]; then
+				mv reads_decon_1.fastq no_host/${sample.id}/${sample.id}_R1.fastq
+				gzip -v no_host/${sample.id}/*.fastq
 			fi	
 			"""
 
