@@ -2,7 +2,7 @@ params.kraken2_min_hit_groups = 10
 params.fix_read_ids = true
 
 process remove_host_kraken2_individual {
-	container "registry.git.embl.de/schudoma/kraken2-docker:latest"
+	container "registry.git.embl.org/schudoma/kraken2-docker:latest"
 	label 'kraken2'
 	label "large"
 
@@ -60,7 +60,7 @@ process remove_host_kraken2_individual {
 			if [[ -f ${sample.id}_1.fastq || -f ${sample.id}_2.fastq ]]; then
 
 				mkdir -p tmp/
-				awk 'NR%4==1' *.fastq | sed 's/^@//' | cut -f 1 -d ' ' | sed 's/\\/[12]//' | sort -T tmp/ | uniq -c | sed 's/^\\s\\+//' > union.txt
+				awk 'NR%4==1' ${sample.id}_?.fastq | sed 's/^@//' | cut -f 1 -d ' ' | sed 's/\\/[12]//' | sort -T tmp/ | uniq -c | sed 's/^\\s\\+//' > union.txt
 				rm -rf tmp/
 
 				((grep '^1' union.txt | cut -f 2 -d " ") || true) > chimeras.txt
@@ -167,7 +167,7 @@ process remove_host_kraken2_individual {
 }
 
 process remove_host_kraken2 {
-	container "registry.git.embl.de/schudoma/kraken2-docker:latest"
+	container "registry.git.embl.org/schudoma/kraken2-docker:latest"
 	label 'kraken2'
 
     input:
