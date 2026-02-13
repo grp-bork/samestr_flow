@@ -94,8 +94,9 @@
             "default": true
         },
         "remove_host": {
-            "type": "boolean",
-            "default": true
+            "type": "string",
+            "enum": ["kraken2", "off"],
+            "default": "off"
         },
         "drop_orphans": {
             "type": "boolean",
