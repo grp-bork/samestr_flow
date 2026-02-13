@@ -79,11 +79,11 @@ process remove_host_kraken2_individual {
 				# fi
 
 				seqtk subseq reads_decon_1.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R1.fastq.gz
-				if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R1.fastq.gz | head -n 1)"]]; then
+				if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R1.fastq.gz | head -n 1)" ]]; then
 					seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R1.fastq.gz
 				fi
 				seqtk subseq reads_decon_2.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R2.fastq.gz
-				if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R2.fastq.gz | head -n 1)"]]; then
+				if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R2.fastq.gz | head -n 1)" ]]; then
 					seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R2.fastq.gz
 				fi
 
