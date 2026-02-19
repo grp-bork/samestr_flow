@@ -25,8 +25,7 @@
                     "type": "string",
 					"format": "directory-path",
 					"hidden": true,
-                    "description": "Path to a kraken2 database",
-					"default": "/vol/data/databases/clowm/CLDB-018fde8b0aa373a5ba7d3236bb921cc9/018fde8b0aac74889c57f7b1af5f87cb/hg38_silva_genome"
+                    "description": "Path to a kraken2 database"					
                 }
             },
             "required": [
@@ -61,15 +60,13 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "Path to metaphlan4 database",
-					"hidden": true,
-                    "default": "/vol/data/databases/clowm/CLDB-0190034231947aec9710260cbaea023c/01900c514077794fa92645bc6a3ee4db"
+					"hidden": true
                 },
 				"samestr_marker_db": {
                     "type": "string",
                     "format": "directory-path",
                     "description": "Path to samestr marker database",
-					"hidden": true,
-                    "default": "/vol/data/databases/clowm/CLDB-0190035a020874b2b26a678a86dd3bd0/0190035a021079518f9579a8a1db7f05/SameStr_mpa_vJun23_CHOCOPhlAnSGB_202307"
+					"hidden": true
                 }
 			},
             "required": [
