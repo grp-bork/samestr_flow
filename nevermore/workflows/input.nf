@@ -4,7 +4,7 @@ include { classify_sample; classify_sample_with_library_info } from "../modules/
 include { bam2fq } from "../modules/converters/bam2fq"
 
 params.bam_input_pattern = "**.bam"	
-params.input_dir_structure = "tree"
+
 def bam_suffix_pattern = params.bam_input_pattern.replaceAll(/\*/, "")
 
 
@@ -178,4 +178,3 @@ workflow bam_input {
 		bamfiles = bam_ch
 		fastqs = fastq_ch
 }
-
