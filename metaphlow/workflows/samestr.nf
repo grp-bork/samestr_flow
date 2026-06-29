@@ -36,6 +36,7 @@ workflow samestr_post_convert {
 process convert_failure_guard {
 	errorStrategy "terminate"
 	label "guard"
+	executor "local"
 
 	input:
 	val(sample_ids)
