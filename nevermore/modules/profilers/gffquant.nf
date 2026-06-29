@@ -76,9 +76,8 @@ process stream_gffquant {
 			def db_call = (params.copy_database) ? "--db GQ_DATABASE" : "--db \$GQ_DATABASE"
 			def db_clean = (params.copy_database) ? "rm -fv GQ_DATABASE" : ""
 			
-			// def gq_cmd = "gffquant ${gq_output} ${gq_params} --db \$GQ_DATABASE --aligner ${params.gq_aligner} ${input_files}"
 			def gq_cmd = "gffquant ${gq_output} ${gq_params} ${db_call} --aligner ${params.gq_aligner} ${input_files}"
-			// GQ_DATABASE=\$(dirname \$(readlink ${gq_db}))/*sqlite3
+			
 			"""
 			set -e -o pipefail
 			mkdir -p logs/ tmp/

@@ -46,14 +46,6 @@ process sortmerna {
 		// 	mv_output = "mv -v work/out/other.fq.gz no_rrna/${sample.id}/${sample.id}_R1.fastq.gz"
 		// }
 
-		// --workdir work/ --idx-dir \$(dirname \$(readlink ${db}))/index/
-		// def index_dir = ""
-		// def prep_index_dir = ""
-		// def rm_index_dir = ""
-		// if (params.sortmerna_db_location_writeable) {
-		// 	prep_index_dir = "ln -s "
-		// }
-
 		"""
 		set -e -o pipefail
 
