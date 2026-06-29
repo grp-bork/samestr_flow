@@ -110,7 +110,10 @@ process run_samestr_filter {
     // #    --sample-pos-min-n-vcov 2 \
     """
     set -e -o pipefail
-    exit 1
+    
+    if [[ \$species == "t__SGB14861" ]]; then
+        exit 1
+    fi
 
     samestr --verbosity DEBUG \
     filter \
