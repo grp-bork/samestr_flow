@@ -36,7 +36,7 @@ process run_samestr_convert {
 
     output:
         tuple val(sample), path("sstr_convert/*/*.npz"), emit: sstr_npy, optional: true
-        tuple val(sample), path("samestr_convert_DONE"), emit: convert_sentinel
+        tuple val(sample), path("samestr_convert_DONE"), emit: sentinel
 
     script:
     """
@@ -102,7 +102,7 @@ process run_samestr_filter {
             path("sstr_filter/${species}.npz"), \
             path("sstr_filter/${species}.names.txt"), \
         emit: sstr_npy, optional: true
-        tuple val(species), path("samestr_filter_DONE"), emit: filter_sentinel
+        tuple val(species), path("samestr_filter_DONE"), emit: sentinel
 
 
     script:

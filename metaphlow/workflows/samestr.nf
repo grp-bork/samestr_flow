@@ -67,7 +67,7 @@ workflow samestr_full {
 
 		// convert_failure_guard(tax_profiles
 		// 	.join(
-		// 		run_samestr_convert.out.convert_sentinel, by: 0, remainder: true
+		// 		run_samestr_convert.out.sentinel, by: 0, remainder: true
 		// 	)
 		// 	.filter { sample, data, sentinel -> sentinel == null }
 		// 	.map { sample, data, sentinel -> sample.id }
@@ -75,7 +75,7 @@ workflow samestr_full {
 		// )
 
 		// grouped_npy_ch = run_samestr_convert.out.sstr_npy
-		// 	.join(run_samestr_convert.out.convert_sentinel, by: 0)
+		// 	.join(run_samestr_convert.out.sentinel, by: 0)
 		// 	.map { sample, data, sentinel -> return data }
 		// 	.flatten()
 		// 	.map { file ->
