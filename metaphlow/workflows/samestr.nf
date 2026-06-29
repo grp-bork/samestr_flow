@@ -70,15 +70,34 @@ workflow samestr_full {
 			params.samestr_marker_db
 		)
 
+		tax_profiles
+			.join(run_samestr_convert.out.sstr_npy, by: 0, remainder: true)
+			.branch { 
+				failure: it[2] == null
+				success: true 
+			}
+			.set { convert_status_ch }
 
-		convert_failure_guard(tax_profiles
-			.join(
-				run_samestr_convert.out.convert_sentinel, by: 0, remainder: true
-			)
-			.filter { sample, data, sentinel -> sentinel == null }
-			.map { sample, data, sentinel -> sample.id }
-			// .collect()
-		)
+		convert_failure_guard(convert_status_ch.failure.map { sample, data, sentinel -> sample.id })
+
+		grouped_npy_ch = convert_status_ch.success
+			.map { sample, data, sentinel -> data }
+			.flatten()
+			.map { file ->
+					def species = file.name.replaceAll(/[.].*/, "")
+					return tuple(species, file)
+			}
+			.groupTuple(sort: true)
+
+
+		// convert_failure_guard(tax_profiles
+		// 	.join(
+		// 		run_samestr_convert.out.convert_sentinel, by: 0, remainder: true
+		// 	)
+		// 	.filter { sample, data, sentinel -> sentinel == null }
+		// 	.map { sample, data, sentinel -> sample.id }
+		// 	// .collect()
+		// )
 
 		grouped_npy_ch = run_samestr_convert.out.sstr_npy
 			.join(run_samestr_convert.out.convert_sentinel, by: 0)
