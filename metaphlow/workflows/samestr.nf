@@ -29,7 +29,7 @@ workflow samestr_post_merge {
 
 		filtered_ch = run_samestr_filter.out.sstr_npy
 			.join(filter_status_ch.success, by: 0)
-			.map { species, data, names, input_data, input_names, sentinel -> [ species, data ] }
+			.map { species, data, names, input_data, input_names, sentinel -> [ species, data, names ] }
 
 		filtered_ch.dump(pretty: true, tag: "filtered_ch")
 
