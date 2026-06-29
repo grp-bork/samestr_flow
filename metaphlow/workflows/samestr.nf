@@ -1,5 +1,7 @@
 include { run_samestr_convert; run_samestr_merge; run_samestr_filter; run_samestr_stats; run_samestr_compare; run_samestr_summarize; collate_samestr_stats } from "../modules/profilers/samestr"
 
+include { failure_guard as convert_failure_guard; failure_guard as filter_failure_guard } from "../modules/profilers/samestr"
+
 
 workflow samestr_post_merge {
 	take:
@@ -18,8 +20,6 @@ workflow samestr_post_merge {
 			tax_profiles.map { sample, table -> return table }.collect(),
 			params.samestr_marker_db
 		)
-
-
 }
 
 
@@ -32,31 +32,6 @@ workflow samestr_post_convert {
 
 		samestr_post_merge(run_samestr_merge.out.sstr_npy, tax_profiles)
 }
-
-process convert_failure_guard {
-	errorStrategy "terminate"
-	label "guard"
-	executor "local"
-	maxRetries 0
-
-	input:
-	val(sample_id)
-
-	script:
-	"""
-	set -e -o pipefail
-
-	printf "Failed convert step detected."
-
-	printf "At least one sample failed: ${sample_id}"
-		
-	printf "Terminating pipeline."
-
-	exit 1
-	"""
-
-}
-
 
 workflow samestr_full {
 
@@ -71,24 +46,24 @@ workflow samestr_full {
 		)
 
 		tax_profiles
-			.join(run_samestr_convert.out.sstr_npy, by: 0, remainder: true)
+			.join(run_samestr_convert.out.sentinel, by: 0, remainder: true)
 			.branch { 
 				failure: it[2] == null
 				success: true 
 			}
 			.set { convert_status_ch }
 
-		convert_failure_guard(convert_status_ch.failure.map { sample, data, sentinel -> sample.id })
+		convert_failure_guard(convert_status_ch.failure.map { sample, data, sentinel -> sample.id }, "convert")
 
-		grouped_npy_ch = convert_status_ch.success
-			.map { sample, data, sentinel -> data }
+		grouped_npy_ch = run_samestr_convert.out.sstr_npy
+			.join(convert_status_ch.success, by: 0)
+			.map { sample, tax_profiles, sentinel, data -> data }
 			.flatten()
 			.map { file ->
-					def species = file.name.replaceAll(/[.].*/, "")
-					return tuple(species, file)
+				def species = file.name.replaceAll(/[.].*/, "")
+				return tuple(species, file)
 			}
 			.groupTuple(sort: true)
-
 
 		// convert_failure_guard(tax_profiles
 		// 	.join(
@@ -99,15 +74,15 @@ workflow samestr_full {
 		// 	// .collect()
 		// )
 
-		grouped_npy_ch = run_samestr_convert.out.sstr_npy
-			.join(run_samestr_convert.out.convert_sentinel, by: 0)
-			.map { sample, data, sentinel -> return data }
-			.flatten()
-			.map { file ->
-					def species = file.name.replaceAll(/[.].*/, "")
-					return tuple(species, file)
-			}
-			.groupTuple(sort: true)
+		// grouped_npy_ch = run_samestr_convert.out.sstr_npy
+		// 	.join(run_samestr_convert.out.convert_sentinel, by: 0)
+		// 	.map { sample, data, sentinel -> return data }
+		// 	.flatten()
+		// 	.map { file ->
+		// 			def species = file.name.replaceAll(/[.].*/, "")
+		// 			return tuple(species, file)
+		// 	}
+		// 	.groupTuple(sort: true)
 
 		if (!params.stop_after_convert) {
 			samestr_post_convert(grouped_npy_ch, tax_profiles)
