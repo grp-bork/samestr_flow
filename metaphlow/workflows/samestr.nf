@@ -33,6 +33,30 @@ workflow samestr_post_convert {
 		samestr_post_merge(run_samestr_merge.out.sstr_npy, tax_profiles)
 }
 
+process convert_failure_guard {
+	input:
+	val(sample_ids)
+
+	script:
+
+	def samples = sample_ids.join("\\n")
+
+	"""
+	set -e -o pipefail
+
+	printf "Failed convert step detected."
+
+	printf "Failed samples:"
+	
+	printf "%s\n" "${samples}"
+	
+	printf "Terminating pipeline."
+
+	exit 1
+	"""
+
+}
+
 
 workflow samestr_full {
 
@@ -44,6 +68,16 @@ workflow samestr_full {
 		run_samestr_convert(
 			alignments.join(tax_profiles),
 			params.samestr_marker_db
+		)
+
+
+		convert_failure_guard(tax_profiles
+			.join(
+				run_samestr_convert.out.convert_sentinel, by: 0, remainder: true
+			)
+			.filter { sample, data, sentinel -> sentinel == null }
+			.map { sample, data, sentinel -> sample.id }
+			.collect()
 		)
 
 		grouped_npy_ch = run_samestr_convert.out.sstr_npy
