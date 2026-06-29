@@ -110,6 +110,7 @@ process run_samestr_filter {
     // #    --sample-pos-min-n-vcov 2 \
     """
     set -e -o pipefail
+    exit 1
 
     samestr --verbosity DEBUG \
     filter \
