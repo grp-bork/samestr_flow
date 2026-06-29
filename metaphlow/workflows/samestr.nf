@@ -20,7 +20,7 @@ workflow samestr_post_merge {
 		ss_merged
 			.join(run_samestr_filter.out.sentinel, by: 0, remainder: true)
 			.branch { 
-				failure: it[2] == null
+				failure: it[3] == null
 				success: true 
 			}
 			.set { filter_status_ch }
