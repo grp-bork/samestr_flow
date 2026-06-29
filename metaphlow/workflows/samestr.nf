@@ -37,23 +37,19 @@ process convert_failure_guard {
 	errorStrategy "terminate"
 	label "guard"
 	executor "local"
+	maxRetries 0
 
 	input:
-	val(sample_ids)
+	val(sample_id)
 
 	script:
-
-	def samples = sample_ids.join("\\n")
-
 	"""
 	set -e -o pipefail
 
 	printf "Failed convert step detected."
 
-	printf "Failed samples:"
-	
-	printf "%s\n" "${samples}"
-	
+	printf "At least one sample failed: ${sample_id}"
+		
 	printf "Terminating pipeline."
 
 	exit 1
@@ -81,7 +77,7 @@ workflow samestr_full {
 			)
 			.filter { sample, data, sentinel -> sentinel == null }
 			.map { sample, data, sentinel -> sample.id }
-			.collect()
+			// .collect()
 		)
 
 		grouped_npy_ch = run_samestr_convert.out.sstr_npy
