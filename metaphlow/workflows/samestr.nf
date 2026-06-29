@@ -10,6 +10,13 @@ workflow samestr_post_merge {
 	main:
 		run_samestr_filter(ss_merged, params.samestr_marker_db)
 
+		// [t__SGB14993, 
+		// /scratch/schudoma/sstrflow_test/work/fe/4a05e4ce3a736f6401f26113eab779/sstr_filter/t__SGB14993.npz, 
+		// /scratch/schudoma/sstrflow_test/work/fe/4a05e4ce3a736f6401f26113eab779/sstr_filter/t__SGB14993.names.txt, 
+		// /scratch/schudoma/sstrflow_test/work/02/607603efaf54fe8d4aee619724007e/sstr_merge/t__SGB14993.npz, 
+		// /scratch/schudoma/sstrflow_test/work/02/607603efaf54fe8d4aee619724007e/sstr_merge/t__SGB14993.names.txt, 
+		// /scratch/schudoma/sstrflow_test/work/fe/4a05e4ce3a736f6401f26113eab779/samestr_filter_DONE]
+
 		ss_merged
 			.join(run_samestr_filter.out.sentinel, by: 0, remainder: true)
 			.branch { 
@@ -18,11 +25,11 @@ workflow samestr_post_merge {
 			}
 			.set { filter_status_ch }
 
-		filter_failure_guard(filter_status_ch.failure.map { sample, data, sentinel -> sample.id }, "filter")
+		filter_failure_guard(filter_status_ch.failure.map { sample, data, names, sentinel -> sample.id }, "filter")
 
 		filtered_ch = run_samestr_filter.out.sstr_npy
 			.join(filter_status_ch.success, by: 0)
-			.map { species, data, input_data, sentinel -> [ species, data ] }
+			.map { species, data, names, input_data, input_names, sentinel -> [ species, data ] }
 
 		// run_samestr_stats(run_samestr_filter.out.sstr_npy, params.samestr_marker_db)
 		run_samestr_stats(filtered_ch, params.samestr_marker_db)
