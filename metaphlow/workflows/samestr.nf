@@ -25,6 +25,8 @@ workflow samestr_post_merge {
 			}
 			.set { filter_status_ch }
 
+		filter_status_ch.dump(pretty: true, tag: "filter_status_ch")
+
 		filter_failure_guard(filter_status_ch.failure.map { sample, data, names, sentinel -> sample.id }, "filter")
 
 		filtered_ch = run_samestr_filter.out.sstr_npy
