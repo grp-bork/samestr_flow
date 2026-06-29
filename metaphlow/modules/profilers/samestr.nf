@@ -111,10 +111,6 @@ process run_samestr_filter {
     """
     set -e -o pipefail
     
-    if [[ ${species} == "t__SGB14861" ]]; then
-        exit 1
-    fi
-
     samestr --verbosity DEBUG \
     filter \
         --input-files ${sstr_npy} \
