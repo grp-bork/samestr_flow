@@ -31,6 +31,8 @@ workflow samestr_post_merge {
 			.join(filter_status_ch.success, by: 0)
 			.map { species, data, names, input_data, input_names, sentinel -> [ species, data ] }
 
+		filtered_ch.dump(pretty: true, tag: "filtered_ch")
+
 		// run_samestr_stats(run_samestr_filter.out.sstr_npy, params.samestr_marker_db)
 		run_samestr_stats(filtered_ch, params.samestr_marker_db)
 		collate_samestr_stats(run_samestr_stats.out.sstr_stats.collect())
