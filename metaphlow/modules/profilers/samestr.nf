@@ -111,7 +111,7 @@ process run_samestr_filter {
     """
     set -e -o pipefail
     
-    if [[ \$species == "t__SGB14861" ]]; then
+    if [[ ${species} == "t__SGB14861" ]]; then
         exit 1
     fi
 
