@@ -57,7 +57,7 @@ workflow samestr_full {
 
 		grouped_npy_ch = run_samestr_convert.out.sstr_npy
 			.join(convert_status_ch.success, by: 0)
-			.map { sample, tax_profiles, sentinel, data -> data }
+			.map { sample, data, tax_profiles, sentinel -> data }
 			.flatten()
 			.map { file ->
 				def species = file.name.replaceAll(/[.].*/, "")
