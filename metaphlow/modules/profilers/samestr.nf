@@ -12,11 +12,11 @@ process failure_guard {
 	"""
 	set -e -o pipefail
 
-	printf "Failed ${stage} step detected."
+	printf "Failed ${stage} step detected.\\n"
 
-	printf "At least one process failed: ${entity_id}"
+	printf "At least one process failed: ${entity_id}\\n"
 		
-	printf "Terminating pipeline."
+	printf "Terminating pipeline.\\n"
 
 	exit 1
 	"""
