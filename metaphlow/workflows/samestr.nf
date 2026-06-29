@@ -10,10 +10,26 @@ workflow samestr_post_merge {
 	main:
 		run_samestr_filter(ss_merged, params.samestr_marker_db)
 
-		run_samestr_stats(run_samestr_filter.out.sstr_npy, params.samestr_marker_db)
+		ss_merged
+			.join(run_samestr_filter.out.sentinel, by: 0, remainder: true)
+			.branch { 
+				failure: it[2] == null
+				success: true 
+			}
+			.set { filter_status_ch }
+
+		filter_failure_guard(filter_status_ch.failure.map { sample, data, sentinel -> sample.id }, "filter")
+
+		filtered_ch = run_samestr_filter.out.sstr_npy
+			.join(filter_status_ch.success, by: 0)
+			.map { species, data, input_data, sentinel -> [ species, data ] }
+
+		// run_samestr_stats(run_samestr_filter.out.sstr_npy, params.samestr_marker_db)
+		run_samestr_stats(filtered_ch, params.samestr_marker_db)
 		collate_samestr_stats(run_samestr_stats.out.sstr_stats.collect())
 
-		run_samestr_compare(run_samestr_filter.out.sstr_npy, params.samestr_marker_db)
+		// run_samestr_compare(run_samestr_filter.out.sstr_npy, params.samestr_marker_db)
+		run_samestr_compare(filtered_ch, params.samestr_marker_db)
 
 		run_samestr_summarize(
 			run_samestr_compare.out.sstr_compare.collect(),
@@ -61,7 +77,7 @@ workflow samestr_full {
 			.flatten()
 			.map { file ->
 				def species = file.name.replaceAll(/[.].*/, "")
-				return tuple(species, file)
+				return [species, file]
 			}
 			.groupTuple(sort: true)
 
