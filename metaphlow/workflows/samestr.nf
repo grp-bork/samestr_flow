@@ -25,7 +25,9 @@ workflow samestr_post_merge {
 			}
 			.set { filter_status_ch }
 
-		filter_status_ch.dump(pretty: true, tag: "filter_status_ch")
+		ss_merged
+			.join(run_samestr_filter.out.sentinel, by: 0, remainder: true)
+			.dump(pretty: true, tag: "filter_status_ch")
 
 		filter_failure_guard(filter_status_ch.failure.map { sample, data, names, sentinel -> sample.id }, "filter")
 
