@@ -18,7 +18,7 @@ process qc_bbduk {
     tuple val(sample), path("qc_reads/${sample.id}/${sample.id}.orphans_R1.fastq.gz"), emit: orphans, optional: true
     path("stats/qc/bbduk/${sample.id}.bbduk_stats.txt")
     tuple val(sample), path("qc_reads/${sample.id}/BBDUK_FINISHED"), emit: sentinel
-    tuple val(sample), path("${sample}.command.log"), emit: logfile
+    tuple val(sample), path("${sample.id}.command.log"), emit: logfile
 
     script:
     def maxmem = task.memory.toGiga() 
@@ -75,6 +75,6 @@ process qc_bbduk {
     touch qc_reads/${sample.id}/BBDUK_FINISHED
     rm -vf *.fq
 
-    cp -v .command.log ${sample}.command.log
+    cp -v .command.log ${sample.id}.command.log
     """
 }
