@@ -117,6 +117,12 @@ def main():
 
         summary.setdefault(sample, {}).update({"host_reads": int(drop), "non_host_reads": int(keep)})
 
+    df = (
+        pd.DataFrame.from_dict(summary, orient="index")
+        .rename_axis("sample")
+        .reset_index()
+    )
+
     cols = ["sample"] + [c for c in df.columns if c != "sample"]
     df = df[cols]
 
