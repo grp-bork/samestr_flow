@@ -19,13 +19,23 @@ def do_stream = params.gq_stream
 
 process collate_prep_and_decon {
 	container "quay.io/biocontainers/pandas:2.2.1"
+	label "tiny"
 
 	input:
 	path(files)
 
+	output:
+	path("readcount_summary.tsv")
+	path("bbduk_logs.tar.gz")
+
 	script:
 	"""
-	collate_prep_and_decon.py -o table.txt -i .
+	collate_prep_and_decon.py -o readcount_summary.tsv -i .
+
+	mkdir -p bbduk_logs/
+	find . -maxdepth 1 -mindepth 1 -name '*.command.log' -exec cp -v {} bbduk_logs/
+
+	tar cvhzf bbduk_logs.tar.gz bbduk_logs/
 	"""
 }
 
