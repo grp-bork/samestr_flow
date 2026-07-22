@@ -25,7 +25,7 @@ process collate_prep_and_decon {
 
 	script:
 	"""
-	collate_prep_and_decon.py -o table.txt ${files}
+	collate_prep_and_decon.py -o table.txt -i .
 	"""
 }
 
