@@ -1,3 +1,7 @@
+VERSION 0.15.1
+
+- avoid (clowm only?) issue with non-existing process dotfiles
+
 VERSION 0.15.0
 
 metaphlow version -> 0.19.9 (local 0.19.9_0.1)
