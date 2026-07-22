@@ -17,6 +17,17 @@ def do_preprocessing = (!params.skip_preprocessing || params.run_preprocessing)
 def do_alignment = params.run_gffquant || !params.skip_alignment
 def do_stream = params.gq_stream
 
+process collate_prep_and_decon {
+	input:
+	path(files)
+
+	script:
+	"""
+	collate_prep_and_decon.py -o table.txt ${files}
+	"""
+}
+
+
 
 workflow nevermore_main {
 
@@ -24,6 +35,8 @@ workflow nevermore_main {
 		fastq_ch
 
 	main:
+		stats_ch = Channel.empty()
+
 		if (do_preprocessing) {
 	
 			nevermore_simple_preprocessing(fastq_ch)
@@ -32,9 +45,11 @@ workflow nevermore_main {
 			if (!params.drop_orphans) {
 				preprocessed_ch = preprocessed_ch.mix(nevermore_simple_preprocessing.out.orphan_reads_out)
 			}
+			stats_ch = stats_ch.mix(nevermore_simple_preprocessing.out.stats)
 
 			nevermore_decon(preprocessed_ch)
 			preprocessed_ch = nevermore_decon.out.reads
+			stats_ch = stats_ch.mix(nevermore_decon.out.stats)
 
 		} else {
 	
@@ -60,9 +75,12 @@ workflow nevermore_main {
 
 		collate_stats(collate_ch.collect())
 
+		collate_prep_and_decon(stats_ch.collect())
+
 
 	emit:
 		fastqs = nevermore_pack_reads.out.fastqs
 		readcounts = collate_ch
+		stats = stats_ch
 
 }

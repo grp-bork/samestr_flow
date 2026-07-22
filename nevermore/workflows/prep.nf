@@ -53,7 +53,9 @@ workflow nevermore_simple_preprocessing {
 		fastq_ch
 
 	main:
+		stats_ch = Channel.empty()
 		rawcounts_ch = Channel.empty()
+
 		if (params.run_qa || (params.subsample.subset && params.subsample.percentile < 100.0 && params.subsample.percentile > 0.0)) {
 
 			fastqc(fastq_ch, "raw")
@@ -151,6 +153,7 @@ workflow nevermore_simple_preprocessing {
 					meta.is_paired = false
 					return [ meta, file ]
 				}
+			stats_ch = stats_ch.mix(qc_bbduk.out.logfile)
 
 		}
 
@@ -159,5 +162,6 @@ workflow nevermore_simple_preprocessing {
 		main_reads_out = processed_reads_ch
 		orphan_reads_out = orphans_ch
 		raw_counts = rawcounts_ch
+		stats = stats_ch
 
 }
