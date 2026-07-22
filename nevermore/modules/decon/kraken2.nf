@@ -59,38 +59,59 @@ process remove_host_kraken2_individual {
 			postprocessing += """
 			if [[ -f reads_decon_1.fastq || -f reads_decon_2.fastq ]]; then
 
-				mkdir -p tmp/
-				awk 'NR%4==1' reads_decon_?.fastq | sed 's/^@//' | cut -f 1 -d ' ' | sed 's/\\/[12]//' | sort -T tmp/ | uniq -c | sed 's/^\\s\\+//' > union.txt
-				rm -rf tmp/
+				paste <(cut -f 1,2 stats/decon/${sample.id}.kraken_read_report_1.txt) <(cut -f 1,2 stats/decon/${sample.id}.kraken_read_report_2.txt) | \
+					awk '/^U/ && \$1==\$3 { printf("%s\\n%s\\n", \$2, \$4) }' | uniq > keep.txt
 
-				# ((grep '^1' union.txt | cut -f 2 -d " ") || true) > chimeras.txt
-				((grep '^2' union.txt | cut -f 2 -d " ") || true) > pairs.txt
-
-				# seqtk subseq reads_decon_1.fastq chimeras.txt >> chimeras.fastq
-				# seqtk subseq reads_decon_2.fastq chimeras.txt >> chimeras.fastq
-				# if [[ ! -s chimeras.fastq ]]; then
-				# 	seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" chimeras.txt) >> chimeras.fastq
-				#	seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" chimeras.txt) >> chimeras.fastq
-				# fi
-
-				# if [[ ! -z "\$(head -n 1 chimeras.fastq)" ]]; then
-				#	mv chimeras.fastq no_host/${sample.id}/${sample.id}.chimeras_R1.fastq
-				# 	gzip no_host/${sample.id}/${sample.id}.chimeras_R1.fastq
-				# fi
-
-				seqtk subseq reads_decon_1.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R1.fastq.gz
-				if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R1.fastq.gz | head -n 1)" ]]; then
-					seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R1.fastq.gz
+				seqtk subseq reads_decon_1.fastq keep.txt > no_host/${sample.id}/${sample.id}_R1.fastq
+				if [[ ! -s no_host/${sample.id}/${sample.id}_R1.fastq ]]; then
+					seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" pairs.txt) > no_host/${sample.id}/${sample.id}_R1.fastq
 				fi
-				seqtk subseq reads_decon_2.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R2.fastq.gz
-				if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R2.fastq.gz | head -n 1)" ]]; then
-					seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R2.fastq.gz
+				seqtk subseq reads_decon_2.fastq keep.txt > no_host/${sample.id}/${sample.id}_R2.fastq
+				if [[ ! -s no_host/${sample.id}/${sample.id}_R2.fastq ]]; then
+					seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" pairs.txt) > no_host/${sample.id}/${sample.id}_R2.fastq
 				fi
 
-				# rm -f reads_decon_1.fastq reads_decon_2.fastq
-				# rm -f chimeras.txt pairs.txt union.txt
+				if [[ -s no_host/${sample.id}/${sample.id}_R1.fastq ]]; then gzip -v no_host/${sample.id}/${sample.id}_R1.fastq; fi &
+				if [[ -s no_host/${sample.id}/${sample.id}_R2.fastq ]]; then gzip -v no_host/${sample.id}/${sample.id}_R2.fastq; fi &
+				wait
+			
 			fi
 			"""
+
+
+
+			// 	mkdir -p tmp/
+			// 	awk 'NR%4==1' reads_decon_?.fastq | sed 's/^@//' | cut -f 1 -d ' ' | sed 's/\\/[12]//' | sort -T tmp/ | uniq -c | sed 's/^\\s\\+//' > union.txt
+			// 	rm -rf tmp/
+
+			// 	# ((grep '^1' union.txt | cut -f 2 -d " ") || true) > chimeras.txt
+			// 	((grep '^2' union.txt | cut -f 2 -d " ") || true) > pairs.txt
+
+			// 	# seqtk subseq reads_decon_1.fastq chimeras.txt >> chimeras.fastq
+			// 	# seqtk subseq reads_decon_2.fastq chimeras.txt >> chimeras.fastq
+			// 	# if [[ ! -s chimeras.fastq ]]; then
+			// 	# 	seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" chimeras.txt) >> chimeras.fastq
+			// 	#	seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" chimeras.txt) >> chimeras.fastq
+			// 	# fi
+
+			// 	# if [[ ! -z "\$(head -n 1 chimeras.fastq)" ]]; then
+			// 	#	mv chimeras.fastq no_host/${sample.id}/${sample.id}.chimeras_R1.fastq
+			// 	# 	gzip no_host/${sample.id}/${sample.id}.chimeras_R1.fastq
+			// 	# fi
+
+			// 	seqtk subseq reads_decon_1.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R1.fastq.gz
+			// 	if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R1.fastq.gz | head -n 1)" ]]; then
+			// 		seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R1.fastq.gz
+			// 	fi
+			// 	seqtk subseq reads_decon_2.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R2.fastq.gz
+			// 	if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R2.fastq.gz | head -n 1)" ]]; then
+			// 		seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R2.fastq.gz
+			// 	fi
+
+			// 	# rm -f reads_decon_1.fastq reads_decon_2.fastq
+			// 	# rm -f chimeras.txt pairs.txt union.txt
+			// fi
+			// """
 
 		} else {
 			postprocessing += """
