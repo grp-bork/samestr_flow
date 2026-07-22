@@ -10,6 +10,7 @@ workflow nevermore_decon {
 		
 		main:
 			preprocessed_ch = Channel.empty()
+			stats_ch = Channel.empty()
 
 			if (params.run_sortmerna) {
 
@@ -39,10 +40,12 @@ workflow nevermore_decon {
 
 				remove_host_kraken2_individual(preprocessed_ch, params.remove_host_kraken2_db)	
 				preprocessed_ch = remove_host_kraken2_individual.out.reads
+				stats_ch = stats_ch.mix(remove_host_kraken2_individual.out.readcounts)
 
 			}
 
 		emit:
 			reads = preprocessed_ch
+			stats = stats_ch
 
 }

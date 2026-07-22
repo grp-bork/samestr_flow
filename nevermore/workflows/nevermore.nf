@@ -10,6 +10,7 @@ include { nevermore_align } from "./align"
 include { nevermore_pack_reads } from "./pack"
 include { nevermore_qa } from "./qa"
 include { nevermore_decon } from "./decon"
+include { collate_prep_and_decon } from "../modules/stats"
 
 
 params.run_preprocessing = params.run_qc
@@ -24,6 +25,8 @@ workflow nevermore_main {
 		fastq_ch
 
 	main:
+		stats_ch = Channel.empty()
+
 		if (do_preprocessing) {
 	
 			nevermore_simple_preprocessing(fastq_ch)
@@ -32,9 +35,11 @@ workflow nevermore_main {
 			if (!params.drop_orphans) {
 				preprocessed_ch = preprocessed_ch.mix(nevermore_simple_preprocessing.out.orphan_reads_out)
 			}
+			stats_ch = stats_ch.mix(nevermore_simple_preprocessing.out.stats)
 
 			nevermore_decon(preprocessed_ch)
 			preprocessed_ch = nevermore_decon.out.reads
+			stats_ch = stats_ch.mix(nevermore_decon.out.stats)
 
 		} else {
 	
@@ -60,9 +65,12 @@ workflow nevermore_main {
 
 		collate_stats(collate_ch.collect())
 
+		collate_prep_and_decon(stats_ch.map {sample, file -> file}.collect())
+
 
 	emit:
 		fastqs = nevermore_pack_reads.out.fastqs
 		readcounts = collate_ch
+		stats = stats_ch
 
 }

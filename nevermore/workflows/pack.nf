@@ -14,7 +14,7 @@ workflow nevermore_pack_reads {
 			.map { sample, fastqs ->
 			def meta = sample.clone()
 			meta.is_paired = [fastqs].flatten().size() == 2
-			return tuple(meta, fastqs)
+			return  [ meta, fastqs ]
 		}
 
 		fastq_ch.dump(pretty: true, tag: "pack_fastq_ch")
@@ -27,7 +27,7 @@ workflow nevermore_pack_reads {
 				def meta = sample.clone()
 				meta.id = fastq.name.replaceAll(/_R1.fastq.gz$/, "")
 				meta.merged = false
-				return tuple(meta, fastq)
+				return [ meta, fastq ]
 			}
 
 		/*	route all paired-end read files into a common channel */
@@ -37,7 +37,7 @@ workflow nevermore_pack_reads {
 			.map { sample, fastq ->
 				def meta = sample.clone()
 				meta.merged = true
-				return tuple(meta, fastq)
+				return [ meta, fastq ]
 			}
 
 		/*	group all single-read files by sample and route into merge-channel */
@@ -47,7 +47,7 @@ workflow nevermore_pack_reads {
 				sample, fastq ->
 					def meta = sample.clone()
 					meta.id = sample.id.replaceAll(/.(orphans|singles|chimeras)$/, ".singles")
-					return tuple(meta, fastq)
+					return [ meta, fastq ]
 			}
 			.branch {
 				single_end: it[0].library == "single"
@@ -73,6 +73,7 @@ workflow nevermore_pack_reads {
 				meta.id = sample_id
 				meta.is_paired = false
 				meta.library = "paired"
+				meta.library_source = (sample_id.endsWith(".metaT") ? "metaT" : ((sample_id.endsWith(".metaG")) ? "metaG": null)) //library_source
 				meta.merged = true
 				meta.multilib = true
 
@@ -104,7 +105,7 @@ workflow nevermore_pack_reads {
 				def meta = sample.clone()
 				meta.id = fastq.name.replaceAll(/_R1.fastq.gz$/, "")
 				meta.merged = false
-				return tuple(meta, fastq)
+				return [ meta, fastq ]
 			}
 			.mix(pe_singles_ch.no_merge)         // raw PE library orphans
 			.mix(single_reads_ch.single_end)     // SE library reads
