@@ -75,7 +75,7 @@ workflow nevermore_main {
 
 		collate_stats(collate_ch.collect())
 
-		collate_prep_and_decon(stats_ch.collect())
+		collate_prep_and_decon(stats_ch.map {sample, file -> file}.collect())
 
 
 	emit:
