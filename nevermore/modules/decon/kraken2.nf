@@ -16,6 +16,7 @@ process remove_host_kraken2_individual {
 	tuple val(sample), path("no_host/${sample.id}/${sample.id}.chimeras_R1.fastq.gz"), emit: chimera_orphans, optional:true
 	tuple val(sample), path("stats/decon/${sample.id}*.txt"), emit: stats, optional: true
 	tuple val(sample), path("no_host/${sample.id}/KRAKEN_FINISHED"), emit: sentinel
+	tuple val(sample), path("${sample.id}.kraken2.txt")
 
 	script:
 	def kraken2_call = "kraken2 --threads ${task.cpus} --db ${kraken_db} --report-minimizer-data --minimum-hit-groups ${params.kraken2_min_hit_groups}"
@@ -61,7 +62,8 @@ process remove_host_kraken2_individual {
 			if [[ -f reads_decon_1.fastq || -f reads_decon_2.fastq ]]; then
 
 				paste <(cut -f 1,2 stats/decon/${sample.id}.kraken_read_report_1.txt) <(cut -f 1,2 stats/decon/${sample.id}.kraken_read_report_2.txt) | \
-					awk '/^U/ && \$1==\$3 { printf("%s\\n%s\\n", \$2, \$4) }' | uniq > keep.txt
+					awk 'BEGIN { keep=0; drop=0; } /^U/ && \$1==\$3 { printf("%s\\n%s\\n", \$2, \$4); keep++; next; } { drop++;} END { printf("%s\\t%s\\n", keep, drop) > "${sample.id}.kraken2.txt" }' | \
+					uniq > keep.txt
 
 				seqtk subseq reads_decon_1.fastq keep.txt > no_host/${sample.id}/${sample.id}_R1.fastq
 				if [[ ! -s no_host/${sample.id}/${sample.id}_R1.fastq ]]; then
@@ -119,6 +121,8 @@ process remove_host_kraken2_individual {
 			if [[ -f reads_decon_1.fastq ]]; then
 				mv reads_decon_1.fastq no_host/${sample.id}/${sample.id}_R1.fastq
 				gzip -v no_host/${sample.id}/*.fastq
+
+				awk 'BEGIN { keep=0; drop=0; } /^U/ { keep++; next; } { drop++;} END { printf("%s\\t%s\\n", keep, drop) > "${sample.id}.kraken2.txt" }' stats/decon/${sample.id}.kraken_read_report_1.txt
 			fi	
 			"""
 
