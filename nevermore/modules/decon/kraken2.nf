@@ -26,6 +26,10 @@ process remove_host_kraken2_individual {
 
 	def fix_read_id_str = ""
 	if (params.fix_read_ids) {
+		// original code had:
+		// seqtk rename <fastq> read | cut -f 1 -d ' ' > <output_fastq>
+		// this strips the comment fields from the fastq header lines -- not sure if that could be useful for edge cases?
+
 		if (r1_files.size() != 0 ) {
 			fix_read_id_str += "zcat ${r1_files[0]} | seqtk rename - read > reads_R1.fastq\n"
 		}
@@ -48,30 +52,27 @@ process remove_host_kraken2_individual {
 	if (r1_files.size() != 0) {		
 		kraken_cmd += "${kraken2_call} --unclassified-out reads_decon_1.fastq --output stats/decon/${sample.id}.kraken_read_report_1.txt --report stats/decon/${sample.id}.kraken_report_1.txt reads_R1.fastq\n"
 		
-		// if (params.fix_read_ids) {
-		// 	fix_read_id_str += "seqtk rename ${sample.id}_1.fastq read | cut -f 1 -d ' ' > ${sample.id}_1.fastq.renamed && mv -v ${sample.id}_1.fastq.renamed ${sample.id}_1.fastq\n"
-		// }
 		if (r2_files.size() != 0) {
 			kraken_cmd += "${kraken2_call} --unclassified-out reads_decon_2.fastq --output stats/decon/${sample.id}.kraken_read_report_2.txt --report stats/decon/${sample.id}.kraken_report_2.txt reads_R2.fastq\n"
 			
-			// if (params.fix_read_ids) {
-			// 	fix_read_id_str += "seqtk rename ${sample.id}_2.fastq read | cut -f 1 -d ' ' > ${sample.id}_2.fastq.renamed && mv -v ${sample.id}_2.fastq.renamed ${sample.id}_2.fastq\n"
-			// }
-
 			postprocessing += """
 			if [[ -f reads_decon_1.fastq || -f reads_decon_2.fastq ]]; then
 
 				paste <(cut -f 1,2 stats/decon/${sample.id}.kraken_read_report_1.txt) <(cut -f 1,2 stats/decon/${sample.id}.kraken_read_report_2.txt) | \
-					awk -v sample=${sample.id} 'BEGIN { keep=0; drop=0; } /^U/ && \$1==\$3 { printf("%s\\n%s\\n", \$2, \$4); keep++; next; } { drop++;} END { printf("%s\\t%s\\t%s\\n", sample, keep, drop) > "${sample.id}.kraken2.txt" }' | \
-					uniq > keep.txt
+					awk -v sample=${sample.id} 'BEGIN { keep=0; drop=0; } /^U/ && \$1==\$3 { printf("%s\\t%s\\n", \$2, \$4); keep++; next; } { drop++;} END { printf("%s\\t%s\\t%s\\n", sample, keep, drop) > "${sample.id}.kraken2.txt" }' \
+					> keep.txt
 
-				seqtk subseq reads_decon_1.fastq keep.txt > no_host/${sample.id}/${sample.id}_R1.fastq
+				cut -f 1 keep.txt > keep1.txt
+				cut -f 2 keep.txt > keep2.txt
+
+				seqtk subseq reads_decon_1.fastq keep1.txt > no_host/${sample.id}/${sample.id}_R1.fastq
 				if [[ ! -s no_host/${sample.id}/${sample.id}_R1.fastq ]]; then
-					seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" pairs.txt) > no_host/${sample.id}/${sample.id}_R1.fastq
+					seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" keep1.txt) > no_host/${sample.id}/${sample.id}_R1.fastq
 				fi
-				seqtk subseq reads_decon_2.fastq keep.txt > no_host/${sample.id}/${sample.id}_R2.fastq
+
+				seqtk subseq reads_decon_2.fastq keep2.txt > no_host/${sample.id}/${sample.id}_R2.fastq
 				if [[ ! -s no_host/${sample.id}/${sample.id}_R2.fastq ]]; then
-					seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" pairs.txt) > no_host/${sample.id}/${sample.id}_R2.fastq
+					seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" keep2.txt) > no_host/${sample.id}/${sample.id}_R2.fastq
 				fi
 
 				if [[ -s no_host/${sample.id}/${sample.id}_R1.fastq ]]; then gzip -v no_host/${sample.id}/${sample.id}_R1.fastq; fi &
@@ -81,52 +82,18 @@ process remove_host_kraken2_individual {
 			fi
 			"""
 
-
-
-			// 	mkdir -p tmp/
-			// 	awk 'NR%4==1' reads_decon_?.fastq | sed 's/^@//' | cut -f 1 -d ' ' | sed 's/\\/[12]//' | sort -T tmp/ | uniq -c | sed 's/^\\s\\+//' > union.txt
-			// 	rm -rf tmp/
-
-			// 	# ((grep '^1' union.txt | cut -f 2 -d " ") || true) > chimeras.txt
-			// 	((grep '^2' union.txt | cut -f 2 -d " ") || true) > pairs.txt
-
-			// 	# seqtk subseq reads_decon_1.fastq chimeras.txt >> chimeras.fastq
-			// 	# seqtk subseq reads_decon_2.fastq chimeras.txt >> chimeras.fastq
-			// 	# if [[ ! -s chimeras.fastq ]]; then
-			// 	# 	seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" chimeras.txt) >> chimeras.fastq
-			// 	#	seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" chimeras.txt) >> chimeras.fastq
-			// 	# fi
-
-			// 	# if [[ ! -z "\$(head -n 1 chimeras.fastq)" ]]; then
-			// 	#	mv chimeras.fastq no_host/${sample.id}/${sample.id}.chimeras_R1.fastq
-			// 	# 	gzip no_host/${sample.id}/${sample.id}.chimeras_R1.fastq
-			// 	# fi
-
-			// 	seqtk subseq reads_decon_1.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R1.fastq.gz
-			// 	if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R1.fastq.gz | head -n 1)" ]]; then
-			// 		seqtk subseq reads_decon_1.fastq <(sed "s:\$:/1:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R1.fastq.gz
-			// 	fi
-			// 	seqtk subseq reads_decon_2.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R2.fastq.gz
-			// 	if [[ -z "\$(zcat no_host/${sample.id}/${sample.id}_R2.fastq.gz | head -n 1)" ]]; then
-			// 		seqtk subseq reads_decon_2.fastq <(sed "s:\$:/2:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R2.fastq.gz
-			// 	fi
-
-			// 	# rm -f reads_decon_1.fastq reads_decon_2.fastq
-			// 	# rm -f chimeras.txt pairs.txt union.txt
-			// fi
-			// """
-
 		} else {
+
 			postprocessing += """
 			if [[ -f reads_decon_1.fastq ]]; then
 				mv reads_decon_1.fastq no_host/${sample.id}/${sample.id}_R1.fastq
 				gzip -v no_host/${sample.id}/*.fastq
 
 				awk -v sample=${sample.id} 'BEGIN { keep=0; drop=0; } /^U/ { keep++; next; } { drop++;} END { printf("%s\\t%s\\t%s\\n", sample, keep, drop) > "${sample.id}.kraken2.txt" }' stats/decon/${sample.id}.kraken_read_report_1.txt
-			fi	
-			"""
+			fi				"""
 
 		}
+
 	}
 
 	"""
@@ -140,63 +107,8 @@ process remove_host_kraken2_individual {
 
 	touch no_host/${sample.id}/KRAKEN_FINISHED
 	"""
-	
-
-	// if (sample.is_paired) {
-		// """
-		
-		// ${kraken2_call} --unclassified-out ${sample.id}_1.fastq --output stats/decon/${sample.id}.kraken_read_report_1.txt --report stats/decon/${sample.id}.kraken_report_1.txt ${sample.id}_R1.fastq.gz
-		// ${kraken2_call} --unclassified-out ${sample.id}_2.fastq --output stats/decon/${sample.id}.kraken_read_report_2.txt --report stats/decon/${sample.id}.kraken_report_2.txt ${sample.id}_R2.fastq.gz
-
-		// if [[ -f ${sample.id}_1.fastq || -f ${sample.id}_2.fastq ]]; then
-
-		// 	${fix_read_id_str}
-
-		// 	mkdir -p tmp/
-		// 	awk 'NR%4==1' *.fastq | sed 's/^@//' | cut -f 1 -d ' ' | sed 's/\\/[12]//' | sort -T tmp/ | uniq -c | sed 's/^\\s\\+//' > union.txt
-		// 	rm -rf tmp/
-
-		// 	((grep '^1' union.txt | cut -f 2 -d " ") || true) > chimeras.txt
-		// 	((grep '^2' union.txt | cut -f 2 -d " ") || true) > pairs.txt
-
-		// 	seqtk subseq ${sample.id}_1.fastq chimeras.txt >> chimeras.fastq
-		// 	seqtk subseq ${sample.id}_1.fastq <(sed "s:\$:/1:" chimeras.txt) >> chimeras.fastq
-		// 	seqtk subseq ${sample.id}_2.fastq chimeras.txt >> chimeras.fastq
-		// 	seqtk subseq ${sample.id}_2.fastq <(sed "s:\$:/2:" chimeras.txt) >> chimeras.fastq
-
-		// 	if [[ ! -z "\$(head -n 1 chimeras.fastq)" ]]; then
-		// 		mv chimeras.fastq no_host/${sample.id}/${sample.id}.chimeras_R1.fastq
-		// 		gzip no_host/${sample.id}/${sample.id}.chimeras_R1.fastq
-		// 	fi
-
-		// 	seqtk subseq ${sample.id}_1.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R1.fastq.gz
-		// 	seqtk subseq ${sample.id}_1.fastq <(sed "s:\$:/1:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R1.fastq.gz
-		// 	seqtk subseq ${sample.id}_2.fastq pairs.txt | gzip -c - > no_host/${sample.id}/${sample.id}_R2.fastq.gz
-		// 	seqtk subseq ${sample.id}_2.fastq <(sed "s:\$:/2:" pairs.txt) | gzip -c - >> no_host/${sample.id}/${sample.id}_R2.fastq.gz
-
-		// 	rm -f ${sample.id}_1.fastq ${sample.id}_2.fastq
-		// 	rm -f chimeras.txt pairs.txt union.txt
-		// fi
-
-		// touch no_host/${sample.id}/KRAKEN_FINISHED
-		// """
-	// } else {
-	// 	"""
-	// 	mkdir -p no_host/${sample.id}
-	// 	mkdir -p stats/decon/
-
-	// 	${kraken2_call} --unclassified-out ${sample.id}_1.fastq --output stats/decon/${sample.id}.kraken_read_report_1.txt --report stats/decon/${sample.id}.kraken_report_1.txt ${sample.id}_R1.fastq.gz
-
-	// 	if [[ -f ${sample.id}_1.fastq ]]; then
-	// 		mv ${sample.id}_1.fastq no_host/${sample.id}/${sample.id}_R1.fastq
-	// 		gzip no_host/${sample.id}/*.fastq
-	// 	fi
-
-	// 	touch no_host/${sample.id}/KRAKEN_FINISHED
-	// 	"""
-	// }
-
 }
+
 
 process remove_host_kraken2 {
 	container "registry.git.embl.org/schudoma/kraken2-docker:latest"
