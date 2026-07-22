@@ -36,7 +36,7 @@ def parse_bbduk_log(logfile):
         "remaining_reads": re.compile(r"Result:\s+([\d,]+)\s+reads"),
     }
 
-    sample_pattern = re.compile(r"out1=.*?/([^/\s]+)_R1\.fastq\.gz")
+    sample_pattern = re.compile(r"out1?=.*?/([^/\s]+)_R1\.fastq\.gz")
 
     for line in lines:
 
