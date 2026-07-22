@@ -16,8 +16,10 @@ def parse_bbduk_log(logfile):
     """
     Parse a BBDuk log file.
 
-    Returns a dictionary:
-        sample_id -> metrics
+    Returns
+    -------
+    dict
+        sample_id -> metric dictionary
     """
 
     with open(logfile) as f:
@@ -26,34 +28,58 @@ def parse_bbduk_log(logfile):
     results = {}
 
     current_sample = None
+    in_metrics = False
 
-    patterns = {
-        "input_reads": re.compile(r"Input:\s+([\d,]+)\s+reads"),
-        "qtrimmed_reads": re.compile(r"QTrimmed:\s+([\d,]+)\s+reads"),
-        "ktrimmed_reads": re.compile(r"KTrimmed:\s+([\d,]+)\s+reads"),
-        "low_quality_discards": re.compile(r"Low quality discards:\s+([\d,]+)\s+reads"),
-        "low_entropy_discards": re.compile(r"Low entropy discards:\s+([\d,]+)\s+reads"),
-        "remaining_reads": re.compile(r"Result:\s+([\d,]+)\s+reads"),
-    }
+    sample_pattern = re.compile(r"out1=.*?/([^/\s]+)_R1\.fastq\.gz")
 
-    sample_pattern = re.compile(r"out1?=.*?/([^/\s]+)_R1\.fastq\.gz")
+    # Matches lines like:
+    # Input:                   20468790 reads ...
+    # QTrimmed:                11633067 reads ...
+    # Low quality discards:    0 reads ...
+    # Total Removed:           4101326 reads ...
+    # Result:                  16367464 reads ...
+    metric_pattern = re.compile(
+        r"^([A-Za-z0-9][A-Za-z0-9 \-]*):\s+([\d,]+)\s+reads"
+    )
 
     for line in lines:
 
-        # Start of a new BBDuk run
+        # Beginning of a new BBDuk run
         m = sample_pattern.search(line)
         if m:
             current_sample = m.group(1)
             results[current_sample] = {}
+            in_metrics = False
             continue
 
         if current_sample is None:
             continue
 
-        for key, pat in patterns.items():
-            m = pat.search(line)
-            if m:
-                results[current_sample][key] = int(m.group(1).replace(",", ""))
+        m = metric_pattern.match(line)
+        if not m:
+            continue
+
+        label, value = m.groups()
+
+        # Start collecting at "Input"
+        if label == "Input":
+            in_metrics = True
+
+        if not in_metrics:
+            continue
+
+        # Convert label into a dataframe-friendly column name
+        column = (
+            label.lower()
+            .replace(" ", "_")
+            .replace("-", "_")
+        )
+
+        results[current_sample][column] = int(value.replace(",", ""))
+
+        # Stop after "Result"
+        if label == "Result":
+            in_metrics = False
 
     return results
 
@@ -78,30 +104,20 @@ def main():
     summary = {}
 
     try:
-        _, dirs, files = next(os.walk(args.input_dir))
+        _, _, files = next(os.walk(args.input_dir))
     except StopIteration:
         raise ValueError(f"Cannot traverse {args.input_dir}.")
 
     for logfile in (f for f in files if f.endswith(".command.log")):
         summary.update(parse_bbduk_log(logfile))
 
-    df = (
-        pd.DataFrame.from_dict(summary, orient="index")
-        .rename_axis("sample")
-        .reset_index()
-    )
+    for logfile in (f for f in files if f.endswith(".kraken2.txt")):
+        with open(logfile) as _in:
+            sample, keep, drop = _in.read().strip().split("\t")
 
-    # Ensure column order
-    cols = [
-        "sample",
-        "input_reads",
-        "qtrimmed_reads",
-        "ktrimmed_reads",
-        "low_quality_discards",
-        "low_entropy_discards",
-        "remaining_reads",
-    ]
+        summary.setdefault(sample, {}).update({"host_reads": int(drop), "non_host_reads": int(keep)})
 
+    cols = ["sample"] + [c for c in df.columns if c != "sample"]
     df = df[cols]
 
     df.to_csv(args.output, sep="\t", index=False)
