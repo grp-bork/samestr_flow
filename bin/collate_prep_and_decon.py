@@ -30,7 +30,7 @@ def parse_bbduk_log(logfile):
     current_sample = None
     in_metrics = False
 
-    sample_pattern = re.compile(r"out1=.*?/([^/\s]+)_R1\.fastq\.gz")
+    sample_pattern = re.compile(r"out1?=.*?/([^/\s]+)_R1\.fastq\.gz")
 
     # Matches lines like:
     # Input:                   20468790 reads ...
