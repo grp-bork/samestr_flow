@@ -16,7 +16,7 @@ process remove_host_kraken2_individual {
 	tuple val(sample), path("no_host/${sample.id}/${sample.id}.chimeras_R1.fastq.gz"), emit: chimera_orphans, optional:true
 	tuple val(sample), path("stats/decon/${sample.id}*.txt"), emit: stats, optional: true
 	tuple val(sample), path("no_host/${sample.id}/KRAKEN_FINISHED"), emit: sentinel
-	tuple val(sample), path("${sample.id}.kraken2.txt")
+	tuple val(sample), path("${sample.id}.kraken2.txt"), emit: readcounts
 
 	script:
 	def kraken2_call = "kraken2 --threads ${task.cpus} --db ${kraken_db} --report-minimizer-data --minimum-hit-groups ${params.kraken2_min_hit_groups}"
