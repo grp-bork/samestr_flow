@@ -1,3 +1,21 @@
+VERSION 0.15.0
+
+metaphlow version -> 0.19.9 (local 0.19.9_0.1)
+
+- added samestr convert and filter failure guards
+
+nevermore version -> 0.15.17 (local 0.15.17_0.2)
+
+- allow multi-suffix removal in prepare_fastqs.py
+- fixed fastq input issue for samples with both paired and orphan reads 
+- add sentinel to sortmerna process
+- add sample_id-tags to various processes
+
+- capture kraken2 readcounts and bbduk logfiles and collate
+ -> generates summary table and bbduk logfile tarball as output
+
+- optimised and simplified kraken2 host decon
+
 VERSION 0.14.0
 
 - improved fastq loading
