@@ -10,37 +10,13 @@ include { nevermore_align } from "./align"
 include { nevermore_pack_reads } from "./pack"
 include { nevermore_qa } from "./qa"
 include { nevermore_decon } from "./decon"
+include { collate_prep_and_decon } from "../modules/stats"
 
 
 params.run_preprocessing = params.run_qc
 def do_preprocessing = (!params.skip_preprocessing || params.run_preprocessing)
 def do_alignment = params.run_gffquant || !params.skip_alignment
 def do_stream = params.gq_stream
-
-
-process collate_prep_and_decon {
-	publishDir "${params.output_dir}", mode: "copy"
-	container "quay.io/biocontainers/pandas:2.2.1"
-	label "tiny"
-
-	input:
-	path(files)
-
-	output:
-	path("readcount_summary.tsv")
-	path("bbduk_logs.tar.gz")
-
-	script:
-	"""
-	collate_prep_and_decon.py -o readcount_summary.tsv -i .
-
-	mkdir -p bbduk_logs/
-	find . -maxdepth 1 -mindepth 1 -name '*.command.log' -exec cp -v {} bbduk_logs/ \\;
-
-	tar cvhzf bbduk_logs.tar.gz bbduk_logs/
-	"""
-}
-
 
 
 workflow nevermore_main {
