@@ -35,7 +35,7 @@ process collate_prep_and_decon {
 	collate_prep_and_decon.py -o readcount_summary.tsv -i .
 
 	mkdir -p bbduk_logs/
-	find . -maxdepth 1 -mindepth 1 -name '*.command.log' -exec cp -v {} bbduk_logs/
+	find . -maxdepth 1 -mindepth 1 -name '*.command.log' -exec cp -v {} bbduk_logs/ \\;
 
 	tar cvhzf bbduk_logs.tar.gz bbduk_logs/
 	"""
