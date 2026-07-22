@@ -18,6 +18,8 @@ def do_alignment = params.run_gffquant || !params.skip_alignment
 def do_stream = params.gq_stream
 
 process collate_prep_and_decon {
+	container "quay.io/biocontainers/pandas:2.2.1"
+
 	input:
 	path(files)
 
