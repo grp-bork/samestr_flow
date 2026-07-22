@@ -115,7 +115,8 @@ def main():
         with open(logfile) as _in:
             sample, keep, drop = _in.read().strip().split("\t")
 
-        summary.setdefault(sample, {}).update({"host_reads": int(drop), "non_host_reads": int(keep)})
+        multiplier = 1 if sample.endswith("orphans") else 2
+        summary.setdefault(sample, {}).update({"host_reads": int(drop) * multiplier, "non_host_reads": int(keep) * multiplier})
 
     df = (
         pd.DataFrame.from_dict(summary, orient="index")
