@@ -17,7 +17,9 @@ def do_preprocessing = (!params.skip_preprocessing || params.run_preprocessing)
 def do_alignment = params.run_gffquant || !params.skip_alignment
 def do_stream = params.gq_stream
 
+
 process collate_prep_and_decon {
+	publishDir "${params.output_dir}", mode: "copy"
 	container "quay.io/biocontainers/pandas:2.2.1"
 	label "tiny"
 
