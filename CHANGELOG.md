@@ -1,3 +1,7 @@
+VERSION 0.15.2
+
+- activate --random-seed for samestr filter and samestr compare
+
 VERSION 0.15.1
 
 - avoid (clowm only?) issue with non-existing process dotfiles

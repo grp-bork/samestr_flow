@@ -124,7 +124,8 @@ process run_samestr_filter {
         --sample-var-min-n-vcov 2 \
         --sample-var-min-f-vcov 0.025 \
         --clade-min-samples 1 \
-        --nprocs ${task.cpus}
+        --nprocs ${task.cpus} \
+        --random-seed 313
 
     touch samestr_filter_DONE
     """
@@ -204,7 +205,8 @@ process run_samestr_compare {
         --input-names ${sstr_names} \
         --marker-dir ${marker_db} \
         --output-dir sstr_compare/ \
-        --nprocs ${task.cpus}
+        --nprocs ${task.cpus} \
+        --random-seed 313
     """
 }
 
