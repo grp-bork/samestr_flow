@@ -1,3 +1,7 @@
+VERSION 0.15.3
+
+- bugfix for 0.15.2
+
 VERSION 0.15.2
 
 - activate --random-seed for samestr filter and samestr compare
