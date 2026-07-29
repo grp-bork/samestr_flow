@@ -1,3 +1,7 @@
+VERSION 0.16.0
+
+- report reads that were processed by Metaphlan4 in `metaphlan4_reads.txt`
+
 VERSION 0.15.3
 
 - bugfix for 0.15.2
