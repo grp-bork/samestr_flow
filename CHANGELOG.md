@@ -1,3 +1,7 @@
+VERSION 0.16.1
+
+ - updated container directives to use images from ghcr.io instead of git.embl.org
+
 VERSION 0.16.0
 
 - report reads that were processed by Metaphlan4 in `metaphlan4_reads.txt`
